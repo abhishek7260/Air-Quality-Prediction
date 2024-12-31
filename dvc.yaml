@@ -1,0 +1,37 @@
+stages:
+  data_collection:
+    cmd: python src/data_collection.py
+    deps:
+    - src/data_collection.py
+    outs:
+    - data/raw
+
+
+  data_processing:
+    cmd: python src/data_preprocess.py
+    deps:
+    - data/raw
+    - src/data_preprocess.py
+    outs:
+    - data/processed
+
+
+  model_evaluation:
+    cmd: python src/model_eval.py
+    deps:
+    - data/processed
+    - src/model_eval.py
+    - models/model.pkl
+    outs:
+    - results/metrics_rfc.json
+  model_building:
+    cmd: python src/model_building.py
+    deps:
+    - data/processed
+    - src/model_building.py
+    params:
+    - model.n_estimators
+    - model.max_depth
+    - data.test_size
+    outs:
+    - models/model.pkl
